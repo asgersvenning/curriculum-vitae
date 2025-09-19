@@ -1,0 +1,41 @@
+name: Publish CV PDF to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: cv-llt.tex
+          args: "-xelatex -file-line-error -interaction=nonstopmode"
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p public
+          cp cv.pdf public/cv.pdf
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
