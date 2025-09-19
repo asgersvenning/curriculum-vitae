@@ -23,7 +23,7 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           mkdir -p public
-          cp cv.pdf public/cv.pdf
+          cp cv-llt.pdf public/cv.pdf
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
